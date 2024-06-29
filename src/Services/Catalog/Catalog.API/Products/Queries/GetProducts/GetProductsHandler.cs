@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.CQRS;
 using Catalog.API.Models;
 using Marten;
+using Marten.Pagination;
 
 namespace Catalog.API.Products.Queries.GetProducts
 {
@@ -13,7 +14,7 @@ namespace Catalog.API.Products.Queries.GetProducts
         public async Task<GetProductsResult> Handle(GetProductsQuery request, CancellationToken cancellationToken)
         {
             var products = await session.Query<Product>()
-           .ToListAsync(cancellationToken);
+           .ToPagedListAsync(request.PageNumber ?? 1, request.PageSize ?? 10, cancellationToken);
 
             return new GetProductsResult(products);
         }
