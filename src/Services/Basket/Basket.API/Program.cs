@@ -1,5 +1,7 @@
+using Basket.API.Data;
 using Basket.API.Models;
 using BuildingBlocks.Behaviors;
+using BuildingBlocks.Exceptions.Handler;
 using Carter;
 using FluentValidation;
 using HealthChecks.UI.Client;
@@ -26,10 +28,33 @@ builder.Services.AddMarten(opts =>
     opts.Schema.For<ShoppingCart>().Identity(x => x.UserName);
 }).UseLightweightSessions();
 
+builder.Services.AddScoped<IBasketRepository, BasketRepository>();
+builder.Services.Decorate<IBasketRepository, CachedBasketRepository>();
+
+//builder.Services.AddScoped<IBasketRepository>(provider =>
+//{
+//    var basketRepo = provider.GetRequiredService<IBasketRepository>();
+//    return new CachedBasketRepository(basketRepo, provider.GetRequiredService<IDistributedCache>());
+//});
+
+string connectionStringRedis = builder.Configuration["Redis:Connection"]!;
+
+//builder.Services.AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(connectionStringRedis));
+
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = connectionStringRedis;
+});
+
+builder.Services.AddExceptionHandler<CustomExceptionHandler>();
+
+builder.Services.AddHealthChecks()
+    .AddNpgSql(builder.Configuration.GetConnectionString("DefaultConnection")!)
+    .AddRedis(connectionStringRedis);
+
 var app = builder.Build();
 
 app.MapCarter();
-
 
 app.UseHealthChecks("/health",
     new HealthCheckOptions

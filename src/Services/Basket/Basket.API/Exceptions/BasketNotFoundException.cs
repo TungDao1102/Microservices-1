@@ -2,10 +2,7 @@
 
 namespace Basket.API.Exceptions
 {
-    public class BasketNotFoundException : NotFoundException
+    public class BasketNotFoundException(string message) : NotFoundException(message)
     {
-        public BasketNotFoundException(string message) : base(message)
-        {
-        }
     }
 }

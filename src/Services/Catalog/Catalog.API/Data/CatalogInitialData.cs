@@ -10,12 +10,12 @@ namespace Catalog.API.Data
         {
             using var session = store.LightweightSession();
 
-            if (await session.Query<Product>().AnyAsync())
+            if (await session.Query<Product>().AnyAsync(cancellation))
                 return;
 
             // Marten UPSERT will cater for existing records
             session.Store<Product>(GetPreconfiguredProducts());
-            await session.SaveChangesAsync();
+            await session.SaveChangesAsync(cancellation);
         }
 
         private static IEnumerable<Product> GetPreconfiguredProducts() => new List<Product>()
