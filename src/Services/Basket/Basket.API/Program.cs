@@ -3,6 +3,7 @@ using Basket.API.Models;
 using BuildingBlocks.Behaviors;
 using BuildingBlocks.Exceptions.Handler;
 using Carter;
+using Discount.gRPC;
 using FluentValidation;
 using HealthChecks.UI.Client;
 using Marten;
@@ -36,6 +37,18 @@ builder.Services.Decorate<IBasketRepository, CachedBasketRepository>();
 //    var basketRepo = provider.GetRequiredService<IBasketRepository>();
 //    return new CachedBasketRepository(basketRepo, provider.GetRequiredService<IDistributedCache>());
 //});
+
+builder.Services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(options =>
+{
+    options.Address = new Uri(builder.Configuration["gRPC:DiscountUrl"]!);
+}).ConfigurePrimaryHttpMessageHandler(() =>
+{
+    var handler = new HttpClientHandler
+    {
+        ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+    };
+    return handler;
+});
 
 string connectionStringRedis = builder.Configuration["Redis:Connection"]!;
 
