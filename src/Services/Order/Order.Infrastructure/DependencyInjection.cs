@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Order.Application.Data;
 using Order.Infrastructure.Data;
 using Order.Infrastructure.Data.Interceptors;
 
@@ -22,7 +23,7 @@ namespace Order.Infrastructure
                 options.UseSqlServer(connectionString);
             });
 
-            //services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
+            services.AddScoped<IApplicationDbContext, AppDbContext>();
 
             return services;
         }

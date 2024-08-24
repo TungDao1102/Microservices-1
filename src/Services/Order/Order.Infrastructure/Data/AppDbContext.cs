@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Order.Application.Data;
 using Order.Domain.Models;
 using System.Reflection;
 
 namespace Order.Infrastructure.Data
 {
-    public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
+    public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options), IApplicationDbContext
     {
         public DbSet<Customer> Customers => Set<Customer>();
         public DbSet<Product> Products => Set<Product>();
