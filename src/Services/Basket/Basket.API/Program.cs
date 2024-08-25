@@ -2,6 +2,7 @@ using Basket.API.Data;
 using Basket.API.Models;
 using BuildingBlocks.Behaviors;
 using BuildingBlocks.Exceptions.Handler;
+using BuildingBlocks.Messaging.MassTransit;
 using Carter;
 using Discount.gRPC;
 using FluentValidation;
@@ -58,6 +59,8 @@ builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = connectionStringRedis;
 });
+
+builder.Services.AddMessageBroker(builder.Configuration);
 
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
